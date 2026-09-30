@@ -23,16 +23,20 @@ export function useToken(): Loadable<string | undefined> {
   useEffect(() => {
     let live = true;
 
-    void chrome.storage.local.get(TOKEN_KEY).then((stored) => {
-      if (live) setToken({ status: "ready", value: normalize(stored[TOKEN_KEY]) });
-    });
+    void chrome.storage.local.get(TOKEN_KEY).then(async (stored) => {
+  let existingToken = normalize(stored[TOKEN_KEY]);
 
-    // Covers a disconnect as well as a paste: the worker removes the key, this
-    // fires, and the panel falls back to the connect card on its own.
-    const onChanged = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
-      if (area !== "local" || !(TOKEN_KEY in changes)) return;
-      setToken({ status: "ready", value: normalize(changes[TOKEN_KEY]?.newValue) });
-    };
+  const demoToken = normalize(import.meta.env.VITE_DEMO_TOKEN);
+
+  if (!existingToken && demoToken) {
+    await chrome.storage.local.set({ [TOKEN_KEY]: demoToken });
+    existingToken = demoToken;
+  }
+
+  if (live) {
+    setToken({ status: "ready", value: existingToken });
+  }
+});
 
     chrome.storage.onChanged.addListener(onChanged);
     return () => {
