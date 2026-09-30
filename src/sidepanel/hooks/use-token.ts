@@ -21,30 +21,42 @@ export function useToken(): Loadable<string | undefined> {
   const [token, setToken] = useState<Loadable<string | undefined>>({ status: "loading" });
 
   useEffect(() => {
-    let live = true;
+  let live = true;
 
-    void chrome.storage.local.get(TOKEN_KEY).then(async (stored) => {
-  let existingToken = normalize(stored[TOKEN_KEY]);
+  void chrome.storage.local.get(TOKEN_KEY).then(async (stored) => {
+    let existingToken = normalize(stored[TOKEN_KEY]);
 
-  const demoToken = normalize(import.meta.env.VITE_DEMO_TOKEN);
+    const demoToken = normalize(import.meta.env.VITE_DEMO_TOKEN);
 
-  if (!existingToken && demoToken) {
-    await chrome.storage.local.set({ [TOKEN_KEY]: demoToken });
-    existingToken = demoToken;
-  }
+    if (!existingToken && demoToken) {
+      await chrome.storage.local.set({ [TOKEN_KEY]: demoToken });
+      existingToken = demoToken;
+    }
 
-  if (live) {
-    setToken({ status: "ready", value: existingToken });
-  }
-});
+    if (live) {
+      setToken({ status: "ready", value: existingToken });
+    }
+  });
 
-    chrome.storage.onChanged.addListener(onChanged);
-    return () => {
-      live = false;
-      chrome.storage.onChanged.removeListener(onChanged);
-    };
-  }, []);
+  const onChanged = (
+    changes: Record<string, chrome.storage.StorageChange>,
+    area: string,
+  ) => {
+    if (area !== "local" || !(TOKEN_KEY in changes)) return;
 
+    setToken({
+      status: "ready",
+      value: normalize(changes[TOKEN_KEY]?.newValue),
+    });
+  };
+
+  chrome.storage.onChanged.addListener(onChanged);
+
+  return () => {
+    live = false;
+    chrome.storage.onChanged.removeListener(onChanged);
+  };
+}, []);
   return token;
 }
 
