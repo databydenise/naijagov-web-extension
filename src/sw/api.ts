@@ -13,7 +13,7 @@ import { parseErrorBody, parsePageContext, parsePlan, parseRunHint, unwrapEnvelo
  * `no-restricted-globals` in `eslint.config.js`.
  */
 
-const DEFAULT_BASE = "naija-gov-repository-backend-pflnenbkt-denise25.vercel.app";
+const DEFAULT_BASE = "https://naijagov-demo-backend-qjplr7no1-denise25.vercel.app/";
 
 export class ApiError extends Error {
   /** 0 when the request never reached a server. */
