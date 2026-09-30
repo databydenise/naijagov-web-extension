@@ -16,6 +16,7 @@ jobs:
     - run: npx vite build
       env:
         CI: false
+        VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
     - uses: actions/upload-artifact@v4
       with:
         name: extension-dist
