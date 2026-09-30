@@ -1,4 +1,3 @@
-```yaml
 name: Build Extension
 
 on:
@@ -30,4 +29,4 @@ jobs:
         with:
           name: extension-dist
           path: dist/
-```
+
