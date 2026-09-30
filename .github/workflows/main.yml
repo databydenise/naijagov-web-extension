@@ -1,4 +1,6 @@
+```yaml
 name: Build Extension
+
 on:
   push:
     branches: [ main ]
@@ -7,17 +9,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
-    - run: npm install
-    - run: npx vite build
-      env:
-        CI: false
-        VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
-    - uses: actions/upload-artifact@v4
-      with:
-        name: extension-dist
-        path: dist/
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+
+      - run: npx vite build
+        env:
+          CI: false
+          VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+          VITE_WEB_BASE: ${{ secrets.VITE_WEB_BASE }}
+          VITE_DEMO_TOKEN: ${{ secrets.VITE_DEMO_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-dist
+          path: dist/
+```
