@@ -15,12 +15,6 @@ import { parseErrorBody, parsePageContext, parsePlan, parseRunHint, unwrapEnvelo
 
 const DEFAULT_BASE = "https://naija-gov-repository-backend-lsvyjcrea-denise25.vercel.app";
 
-/** No hardcoded hosts. `.env` sets this; the default is the local backend. */
-const API_BASE = (import.meta.env.VITE_API_BASE ?? DEFAULT_BASE).replace(
-  /\/$/,
-  "",
-);
-
 export class ApiError extends Error {
   /** 0 when the request never reached a server. */
   readonly status: number;
